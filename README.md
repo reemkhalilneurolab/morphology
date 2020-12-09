@@ -6,6 +6,6 @@ file/tree/neuron into a function and then calculate distances between fuinctions
 
 2- please all the folders from (1) in the data folder ( Topological_Sholl_Descriptors/data)
 
-3- run main.main
+3- run main.m
 
 4- Results ( dendrograms , distance matrices ,..) will be in the save folder. ( Topological_Sholl_Descriptors/save)
