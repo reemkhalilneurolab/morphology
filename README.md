@@ -1,6 +1,8 @@
+Code is written and maintained by Ahmad Farhat @ ahmad.farhat@hotmail.com and Pawel Dlotko @ pdlotko@impan.pl
+
 # Topological_Sholl_Descriptors
 
-1- All swc files must be groupoed in folders so that results can be compared to the original datasets. 
+1- All swc files must be grouped in folders so that results can be compared to the original datasets. 
 Pleae note that all the descriptors have no knowledge of the swc groups as they simply convert each swc 
 file/tree/neuron into a function and then calculate distances between fuinctions and cluster accordingly. 
 
