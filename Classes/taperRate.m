@@ -41,6 +41,10 @@ classdef taperRate
                 else
                     area_taper_rate(i,2) = vect_taper_rate{i}(end,2);               
                 end 
+                 [m , b ] = get_linear_regression(vect_taper_rate{i}(:,1),vect_taper_rate{i}(:,2));
+                area_taper_rate(i,3) = m;
+                area_taper_rate(i,4) = b;  
+                
             end  
             save(fullfile( pwd , CreateTree.save_directory('area_taper_rate')),'area_taper_rate' );
         end

@@ -3,7 +3,7 @@ classdef combination_of_distances
 methods(Static)
     function combine_distances(dx)
          tStart = tic; 
-        %In this file we will read distance matrices comong from various descriptor
+        %In this file we will read distance matrices among various descriptor
         %and build a combinations of them to get one distance matrix to rule them
         %all.
         %load swc vector

@@ -55,7 +55,12 @@ classdef branchingPattern
                     area_branching_pattern(i,2) = vect_branching_pattern{i}(1,2);
                 else
                     area_branching_pattern(i,2) = vect_branching_pattern{i}(end,2);               
-                end 
+                end
+                
+                [m , b ] = get_linear_regression(vect_branching_pattern{i}(:,1),vect_branching_pattern{i}(:,2));
+                area_branching_pattern(i,3) = m;
+                area_branching_pattern(i,4) = b;     
+                
             end         
         save(fullfile( pwd , CreateTree.save_directory('area_branching_pattern')),'area_branching_pattern' );
 

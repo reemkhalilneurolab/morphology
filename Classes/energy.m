@@ -10,23 +10,16 @@ classdef energy
         function get_energy()
             load(fullfile(pwd, CreateTree.save_directory('trees_vector.mat')));
             energy_dist_matrix= energy.get_energy_fun_r_dist_matrix(trees_vector);
-            %            energy_dist_matrix= DM.get_energy_dist_matrix(trees_vector);
             assignin('base','energy_dist_matrix',energy_dist_matrix);
             save(fullfile( pwd , CreateTree.save_directory('energy_dist_matrix')),'energy_dist_matrix' );
-%             DM.get_clusters(energy_dist_matrix);
             get_dendrogram(energy_dist_matrix,'energy');
         end 
         
-        %==================================================================
-        %>@brief   
-        %>@param 
-        %>@retval
-        %==================================================================       
+ 
         function energy_dist_matrix= get_energy_fun_r_dist_matrix(trees_vector)
             vect_energy =cell(1,length(trees_vector)); 
             vect_energy{1,length(trees_vector)} = [];
             area_energy = zeros(length(trees_vector),2);
-%             load(fullfile(pwd, CreateTree.save_directory('vect_energy.mat')));
             for i=1:length(trees_vector)
                 disp(['processing Energy for tree :   ,' num2str(i), ' out of ' ,num2str(length(trees_vector)), ' --started at ', datestr(now,'HH:MM:SS.FFF')]);
                 tree=normalize_tree(trees_vector(i));
@@ -42,23 +35,17 @@ classdef energy
                        energy_dist_matrix(j,i) = denergy;
                  end 
                 area_energy(i,1) = trapz(vect_energy{i}(:,1),vect_energy{i}(:,2));
-                if vect_energy{i}(1,1) == 0 && vect_energy{i}(1,1) ~= 0
-                    area_energy(i,2) = vect_energy{i}(1,2);
-                else
-                    area_energy(i,2) = vect_energy{i}(end,2);               
-                end 
+                area_energy(i,2) = vect_energy{i}(end,2);  
+                               
+                [m , b ] = get_linear_regression(vect_energy{i}(:,1),vect_energy{i}(:,2));
+                area_energy(i,3) = m;
+                area_energy(i,4) = b;  
                  
             end  
-            save(fullfile( pwd , CreateTree.save_directory('area_energy')),'area_energy' );
- 
+            save(fullfile( pwd , CreateTree.save_directory('area_energy')),'area_energy' ); 
         end 
         
-        %==================================================================
-        %>@brief function gets the energy  contribution of every node to the
-        %> soma. 
-        %>@param 
-        %>@retval
-        %==================================================================        
+   
         function energy_value= get_energy_func_r(mytree)
 % 
             is_leaf = mytree.is_leaf( );
@@ -74,7 +61,6 @@ classdef energy
                    v1 =  [node.coordinates(1) node.coordinates(2) node.coordinates(3)];
                    v2= distance_of_vectors( v1 , pos );
                    v = [v2 v1];
-%                    v2 = [ v node.radius ]; 
                    positions_and_diam = [ positions_and_diam ; v ];
                end
             end 
@@ -87,18 +73,8 @@ classdef energy
             positions_and_diam = sortrows(positions_and_diam,1);
      
             for i = 1:size(positions_and_diam)        
-                %I am adding +1 to denominator to make sure that we are not
-                %dividing by zero if by any chance we get a point very
-                %close to the root. 
-%                 dist = distance_of_vectors( positions_and_diam(i,1:3),pos );
                 dist=positions_and_diam(i,1);
-%                 contribution_term_1 = positions_and_diam(i,4) * (pos(1)-positions_and_diam(i,1)) / ( sqrt(dist + 1) );
-%                 contribution_term_2 = positions_and_diam(i,4) * (pos(2)-positions_and_diam(i,2)) / ( sqrt(dist + 1) );
-%                 contribution_term_3 = positions_and_diam(i,4) * (pos(3)-positions_and_diam(i,3)) / ( sqrt(dist + 1) );
-%                 contribution_term_1 = (1/positions_and_diam(i,4)) * (pos(1)-positions_and_diam(i,1)) / ( sqrt(dist) );
-%                 contribution_term_2 = (1/positions_and_diam(i,4)) * (pos(2)-positions_and_diam(i,2)) / ( sqrt(dist) );
-%                 contribution_term_3 = (1/positions_and_diam(i,4)) * (pos(3)-positions_and_diam(i,3)) / ( sqrt(dist) );
-%                 
+    
                 contribution_term_1 =  (pos(1)-positions_and_diam(i,2)) / ( dist );
                 contribution_term_2 =  (pos(2)-positions_and_diam(i,3)) / ( dist );
                 contribution_term_3 =  (pos(3)-positions_and_diam(i,4)) / ( dist );
@@ -114,68 +90,6 @@ classdef energy
         end
         %==================================================================
         
-%         %==================================================================
-%         %>@brief function gets the energy  contribution of every node to the
-%         %> soma. 
-%         %>@param 
-%         %>@retval
-%         %==================================================================        
-%         function energy_value= get_energy_func_r(mytree)
-% % 
-%             is_leaf = mytree.is_leaf( );
-%             is_branch = mytree.is_branching_point( );
-%             
-%             positions_and_diam = [];
-%             for i=1:mytree.numNodes
-%                
-%                if ( (is_leaf(i) == 1) || (is_branch(i) == 1) )
-%                    node = mytree.Get_Node(i);
-%                    v = [ node.coordinates(1) node.coordinates(2) node.coordinates(3) node.radius ]; 
-%                    positions_and_diam = [ positions_and_diam ; v ];
-%                end
-%             end 
-%         
-%             
-%             energy_value = 0;
-%             sizes = size(positions_and_diam);
-%             contribution_1=0;
-%             contribution_2=0;
-%             contribution_3=0;
-%             root = mytree.get_root();
-%              pos = [root.coordinates(1) root.coordinates(2) root.coordinates(3)];
-% %             pos =  mytree.get_center_of_mass();
-%             dist1 = zeros(size(positions_and_diam));
-%             for i=1:size(positions_and_diam)
-%             dist1(i) = distance_of_vectors( positions_and_diam(i,1:3),pos );
-%             end
-%             dist1 = sortrows(dist1,1);
-%      
-%             for i = 1:sizes(1)        
-%                 %I am adding +1 to denominator to make sure that we are not
-%                 %dividing by zero if by any chance we get a point very
-%                 %close to the root. 
-% %                 dist = distance_of_vectors( positions_and_diam(i,1:3),pos );
-%                 dist=dist1(i);
-% %                 contribution_term_1 = positions_and_diam(i,4) * (pos(1)-positions_and_diam(i,1)) / ( sqrt(dist + 1) );
-% %                 contribution_term_2 = positions_and_diam(i,4) * (pos(2)-positions_and_diam(i,2)) / ( sqrt(dist + 1) );
-% %                 contribution_term_3 = positions_and_diam(i,4) * (pos(3)-positions_and_diam(i,3)) / ( sqrt(dist + 1) );
-% %                 contribution_term_1 = (1/positions_and_diam(i,4)) * (pos(1)-positions_and_diam(i,1)) / ( sqrt(dist) );
-% %                 contribution_term_2 = (1/positions_and_diam(i,4)) * (pos(2)-positions_and_diam(i,2)) / ( sqrt(dist) );
-% %                 contribution_term_3 = (1/positions_and_diam(i,4)) * (pos(3)-positions_and_diam(i,3)) / ( sqrt(dist) );
-% %                 
-%                 contribution_term_1 =  (pos(1)-positions_and_diam(i,1)) / ( dist );
-%                 contribution_term_2 =  (pos(2)-positions_and_diam(i,2)) / ( dist );
-%                 contribution_term_3 =  (pos(3)-positions_and_diam(i,3)) / ( dist );
-%             
-%                contribution_1=contribution_1+contribution_term_1;
-%                contribution_2=contribution_2+contribution_term_2;
-%                contribution_3=contribution_3+contribution_term_3; 
-%               
-%                energy_value(i,1)=dist;
-%                energy_value(i,2)=contribution_1^2+contribution_2^2+contribution_3^2;
-%                
-%             end                          
-%         end
 %         %==================================================================
         %>@brief    
         %In this function we compute the value of a energy at the point pos.
@@ -220,7 +134,7 @@ classdef energy
             positions_and_diam = [];
             for i=1:mytree.numNodes
                node = mytree.Get_Node(i);
-               %if it is leaf or brach
+               %if it is leaf or branch
                if ( (is_leaf(i) == 1) || (is_branch(i) == 1) )
                    %We get its coodrginates:
                    v = [ node.coordinates(1) node.coordinates(2) node.coordinates(3) node.radius ]; 

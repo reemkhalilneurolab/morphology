@@ -1,53 +1,18 @@
 function get_dendrogram(dist_matrix,name)
-% load(fullfile(pwd, CreateTree.save_directory('tortuosity_dist_matrix.mat')));
- load(fullfile(pwd, CreateTree.save_directory('swc_vector.mat')));
 
-%  myfunc = @(x,k) clusterdata(x,'linkage','average','maxclust',k);
-%   eva = evalclusters(x,myfunc,'CalinskiHarabasz','klist',[1:6]);
-% [rows columns] = size(dist_matrix);
-% v = [];
-% [rows columns] = size(dist_matrix);
-%     for i = 1:rows-1
-%                 v = [v dist_matrix(i,i+1:columns)];
-%     end
-% dist_matrix =[];
-% dist_matrix = v;
+load(fullfile(pwd, CreateTree.save_directory('swc_vector.mat')));
 dist_matrix = squareform(dist_matrix);
-
-
-% eva = evalclusters(dist_matrix,'linkage','CalinskiHarabasz','KList',[1:3]);
-% 
-% numClusters=eva.OptimalK;
-numClusters =3;
-%  numClusters =4;
-% DM.get_clusters(dist_matrix);
-Z=linkage(dist_matrix,'average');
+[classes,~,idx]=unique(swc_vector(4,:)');
+numClusters = size(classes,1);
+Z=linkage(dist_matrix,'ward');
 T = cluster(Z,'Maxclust',numClusters);
-% cutoff = median([Z(end-2,3) Z(end-1,3)]);
 color = Z(end-numClusters+2,3)-eps;
 
-% scrsz = get(0,'ScreenSize');
-% figH1=figure('Position',[scrsz(1) scrsz(2) scrsz(3) scrsz(4)]);
-% gscatter(dist_matrix(:,1),dist_matrix(:,2),T);
-% set(gcf,'name',name,'numbertitle','off')
-% fname = 'C:\Workspace\Repositories\PARS-TMD\save'; %laptop
-% fname = 'D:\GitHub\Morphology_Descriptors\save'; %HPC
-% fname = 'C:\Users\rkhalil\Documents\GitHub\PARS-TMD\save';
-% fname = fullfile(pwd,'\save');
-% filename=sprintf('Cluster_%s.jpg',name);
-% saveas(gcf, fullfile(fname, filename));
 labels = cellstr(swc_vector(4,:));
-% [NumData, labels, AllData]  = xlsread('D:\GitHub\Morphology\save\index.xlsx', 'Sheet1','A1:A29');
-% labels = transpose(labels);
  for i=1:numel(labels)
   labels(i)= replace( labels(i) , '_' , '-' )  ; 
  end   
   labels = cellfun(@(x) x(1:end-1), labels, 'Uniform', 0);
-  
-% for i=1:numel(labels)
-%     labels(i) =strcat(labels(i),  num2str(i));
-% end
- % strip the last two characters _1
  
 %  make the figure full screen
  scrsz = get(0,'ScreenSize');
@@ -78,7 +43,6 @@ for k = 1:numel(ulab) % for every type of lable
         else
             lab{myloc(j)}=strcat('-------',num2str(origpos(myloc(j))));  
         end 
-%            lab{myloc(j)}=strcat('----',lab{myloc(j)},'----',num2str(origpos(myloc(j))));  
     end
 
     c=c+0.02;
@@ -93,31 +57,9 @@ ax.YAxis.TickLabels = repelem('  ',max(cellfun(@numel,lab)));
 
 
 set(gcf,'name',name,'numbertitle','off')
-% % fname = 'C:\Workspace\Repositories\PARS-TMD\save'; %laptop
-% fname = 'D:\GitHub\Morphology_Descriptors\save'; %HPC
-% % fname = 'C:\Users\rkhalil\Documents\GitHub\PARS-TMD\save';
 fname = fullfile(pwd,'\save');
 filename=sprintf('Dendrogram_%s.jpg',name);
 saveas(gcf, fullfile(fname, filename))
 
-% NE = [max(xlim) max(ylim)]-[diff(xlim) diff(ylim)]*0.05;
-% SW = [min(xlim) min(ylim)]+[diff(xlim) diff(ylim)]*0.05;
-% NW = [min(xlim) max(ylim)]+[diff(xlim) -diff(ylim)]*0.05;
-% SE = [max(xlim) min(ylim)]+[-diff(xlim) diff(ylim)]*0.05;
-% text(NE(1), NE(2), 'NORTHEAST!', 'VerticalAlignment','top', 'HorizontalAlignment','right')
-% text(SW(1), SW(2), 'SOUTHWEST!', 'VerticalAlignment','bottom', 'HorizontalAlignment','left')
-% text(NW(1), NW(2), 'NORTHWEST!', 'VerticalAlignment','top', 'HorizontalAlignment','left')
-% text(SE(1), SE(2), 'SOUTHEAST!', 'VerticalAlignment','bottom', 'HorizontalAlignment','right')
-
-% for k = 1:numel(Y)
-%     if Y{k}(1)==fix(Y{k}(1))
-%         line(ax,X{k}(1:2),Y{k}(1:2),'Color',clr(lab_ind(Y{k}(1)),:),...
-%             'LineWidth',2);
-%     end
-%     if Y{k}(3)==fix(Y{k}(3))
-%         line(ax,X{k}(3:4),Y{k}(3:4),'Color',clr(lab_ind(Y{k}(3)),:),...
-%             'LineWidth',2);
-%     end
-% end
 
 end

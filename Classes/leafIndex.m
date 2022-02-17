@@ -50,6 +50,10 @@ classdef leafIndex
                 else
                     area_leaf_index(i,2) = vect_leaf_index{i}(end,2);               
                 end  
+                
+               [m , b ] = get_linear_regression(vect_leaf_index{i}(:,1),vect_leaf_index{i}(:,2));
+                area_leaf_index(i,3) = m;
+                area_leaf_index(i,4) = b;  
                  
             end   
             save(fullfile( pwd , CreateTree.save_directory('area_leaf_index')),'area_leaf_index' );

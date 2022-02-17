@@ -14,11 +14,12 @@ function main()
          tortuosity.get_tortuosity();
          flux.get_flux();
          wiring.get_wiring();
-         branchingPattern.get_branching_pattern();
-         tmd.get_tmd();        
+         branchingPattern.get_branching_pattern();       
          leafIndex.get_leaf_index();             
          energy.get_energy();
-         taperRate.get_taper_rate();
+         Tmd_sholl.get_tmd_dendrogram();
+         Tmd_classical.get_tmd_dendrogram(); 
+          taperRate.get_taper_rate();
 %         ----------------------------------------------- 
         disp(['PROCESSING ENDED @@@@:   ' , datestr(now,'HH:MM:SS.FFF')]);
         print_step_functions();

@@ -27,7 +27,7 @@ classdef flux
             save(fullfile( pwd , CreateTree.save_directory('south_flux_dist_matrix')),'south_flux_dist_matrix' );
             save(fullfile( pwd , CreateTree.save_directory('lateral_flux_dist_matrix')),'lateral_flux_dist_matrix' );
 
-            get_dendrogram(flux_dist_matrix,'Flux');
+            get_dendrogram(flux_dist_matrix,'flux');
             get_dendrogram(north_flux_dist_matrix,'North_Flux');
             get_dendrogram(south_flux_dist_matrix,'South_Flux');
             get_dendrogram(lateral_flux_dist_matrix,'Lateral_Flux');
@@ -94,6 +94,9 @@ classdef flux
                     area_flux(i,2) = vect_flux{i}(end,2);               
                 end 
                  
+                [m , b ] = get_linear_regression(vect_flux{i}(:,1),vect_flux{i}(:,2));
+                area_flux(i,3) = m;
+                area_flux(i,4) = b; 
                  
             end
             save(fullfile( pwd , CreateTree.save_directory('area_flux')),'area_flux' );

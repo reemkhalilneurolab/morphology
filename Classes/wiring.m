@@ -13,22 +13,9 @@ classdef wiring
             load(fullfile(pwd, CreateTree.save_directory('trees_vector.mat')));
             wiring_dist_matrix= wiring.get_wiring_dist_matrix(trees_vector);
             save(fullfile( pwd , CreateTree.save_directory('wiring_dist_matrix')),'wiring_dist_matrix' );
-            DM.get_clusters(wiring_dist_matrix);
             get_dendrogram(wiring_dist_matrix,'wiring');
         end 
-  
-        %==================================================================
-        %> @brief  wiring_of_paths_in_tree return a vector of values if
-        %wiring for every path in the paths cell array. To get the paths,
-        %please use get_paths_from_leafs_to_root method of the Tree class. 
-        %>
-        %> @retval vector of wiring of paths in the paths input variable
-        % =================================================================
-        function get_wiring_dist_matrix_artificial_trees()
-            trees_vector=unitTest.test_random_coordinates()
-            wiring_dist_matrix= get_tort_dist_matrix(trees_vector);
-            DM.get_clusters(wiring_dist_matrix);            
-        end
+
 
         function wiring_dist_matrix= get_wiring_dist_matrix(trees_vector)
             area_wiring = zeros(length(trees_vector),2);
@@ -54,7 +41,13 @@ classdef wiring
                     area_wiring(i,2) = vect_wiring{i}(1,2);
                 else
                     area_wiring(i,2) = vect_wiring{i}(end,2);               
-                end 
+                end
+                
+                [m , b ] = get_linear_regression(vect_wiring{i}(:,1),vect_wiring{i}(:,2));
+                area_wiring(i,3) = m;
+                area_wiring(i,4) = b;    
+                 
+                
             end 
              save(fullfile( pwd , CreateTree.save_directory('area_wiring')),'area_wiring' );
         end
